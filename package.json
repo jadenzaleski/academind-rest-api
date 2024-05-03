@@ -1,0 +1,12 @@
+{
+  "name": "academind-rest-api",
+  "version": "1.0.0",
+  "description": "RESTful API tutorial project from Academind.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["node", "restful", "api"],
+  "author": "Jaden Zaleski",
+  "license": "ISC"
+}
