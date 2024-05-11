@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { Sequelize, Model, DataTypes } = require('sequelize');
+const Product = require("../models/product");
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
@@ -7,14 +9,14 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
-    const product = {
+router.post('/', async (req, res, next) => {
+    const product = await Product.create({
         name: req.body.name,
         price: req.body.price,
-    }
+    })
     res.status(201).json({
         message: "Handling POST request to /products",
-        createdProduct: product
+        product: product.toJSON(),
     })
 })
 

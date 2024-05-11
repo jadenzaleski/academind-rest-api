@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const { Sequelize } = require('sequelize');
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
@@ -9,6 +11,17 @@ const orderRoutes = require('./api/routes/orders');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: 'mysql'
+});
+
+sequelize
+    .authenticate()
+    .then(() => console.log('Successfully connected to the database!'))
+    .catch((error) => console.log('Failed to connect the database:', error))
+
 
 // Handle CORS errors with headers
 app.use((req,res,next)=>{
