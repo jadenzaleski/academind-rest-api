@@ -15,10 +15,12 @@ const productSchema = sequelize.define('product', {
         primaryKey: true
     },
     name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     price: {
-        type: DataTypes.DOUBLE
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     }
 });
 

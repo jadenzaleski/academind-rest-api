@@ -6,7 +6,22 @@ const Product = require("../models/product");
 router.get('/', (req, res, next) => {
     Product.findAll()
         .then(r => {
-            res.status(200).json(r)
+            const response = {
+                count: r.length,
+                docs: r.map(d => {
+                        return {
+                            name: d.name,
+                            price: d.price,
+                            _id: d._id,
+                            request: {
+                                type: "GET",
+                                url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT +"/products/" + d._id
+                            }
+                        }
+
+                })
+            }
+            res.status(200).json(response)
         })
         .catch(err => {
             res.status(500).json(err)
@@ -14,17 +29,25 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
-    const product = await Product.create({
-        name: req.body.name, price: req.body.price,
-    }).then(r => {
+    try {
+        const product = await Product.create({
+            name: req.body.name,
+            price: req.body.price,
+        });
         res.status(201).json({
-            message: "Product added to database.", product: product.toJSON(),
-        })
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+            message: "Product added to database.",
+            product: product.toJSON(),
+            request: {
+                type: "POST",
+                url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products/" + product._id,
+            }
+        });
+    } catch (err) {
+        res.status(500).json(err);
+        console.log(err);
+    }
+});
 
-})
 
 router.get('/:productID', (req, res, next) => {
     const id = req.params.productID;
@@ -34,7 +57,13 @@ router.get('/:productID', (req, res, next) => {
         }
     }).then(r => {
         if (r.length > 0) {
-            res.status(200).json(r)
+            res.status(200).json( {
+                response: r,
+                request: {
+                    type: "GET",
+                    url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products",
+                }
+            })
         } else {
             res.status(404).json({message: "Product not found."})
         }
@@ -57,7 +86,13 @@ router.patch('/:productID', (req, res, next) => {
             }
         })
         .then(r => {
-            res.status(200).json(r)
+            res.status(200).json( {
+                response: r,
+                request: {
+                    type: "PATCH",
+                    url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products/" + id,
+                }
+            })
         })
         .catch(err => {
             res.status(500).json(err)
@@ -72,7 +107,8 @@ router.delete('/:productID', (req, res, next) => {
         }
     }).then(r => {
         res.status(200).json({
-            message: "Products deleted from database with matching id.", _id: id, response: r
+            message: "Products deleted from database with matching id.", _id: id,
+            response: r
         })
     }).catch(err => {
         res.status(500).json(err)
