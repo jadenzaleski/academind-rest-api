@@ -16,6 +16,10 @@ Product.init({
     price: {
         type: DataTypes.DOUBLE,
         allowNull: false
+    },
+    productImage: {
+        type: DataTypes.STRING,
+        defaultValue: ""
     }
 }, {
     sequelize,
