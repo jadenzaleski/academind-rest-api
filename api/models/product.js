@@ -1,14 +1,9 @@
-const { Sequelize, DataTypes} = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../../instance');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'mysql',
-    define: {
-        timestamps: false,
-    }
-});
+class Product extends Model {}
 
-const productSchema = sequelize.define('product', {
+Product.init({
     _id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -16,16 +11,15 @@ const productSchema = sequelize.define('product', {
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
     price: {
         type: DataTypes.DOUBLE,
-        allowNull: false,
+        allowNull: false
     }
+}, {
+    sequelize,
+    modelName: 'Product'
 });
 
-productSchema.sync()
-    .then(r => console.log('productSchema synchronized successfully.'))
-    .catch(err => console.log(err));
-
-module.exports = productSchema;
+module.exports = Product;

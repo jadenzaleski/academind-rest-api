@@ -1,19 +1,18 @@
-const { Sequelize, DataTypes} = require('sequelize');
-const Product = require("../models/product");
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../../instance');
+const Product = require('./product');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'mysql',
-    define: {
-        timestamps: false,
-    }
-});
+class Order extends Model {}
 
-const orderSchema = sequelize.define('order', {
+Order.init({
     _id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
+    },
+    quantity: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1
     },
     product: {
         type: DataTypes.UUID,
@@ -22,17 +21,14 @@ const orderSchema = sequelize.define('order', {
             key: '_id'
         },
         allowNull: false
-    },
-    quantity: {
-        type: DataTypes.INTEGER,
-        defaultValue: 1
     }
-
+}, {
+    sequelize,
+    modelName: 'Order'
 });
 
+// Define associations
+Order.belongsTo(Product, { foreignKey: 'product' });
+Product.hasMany(Order, { foreignKey: 'product' });
 
-
-orderSchema.sync()
-    .then(r => console.log('orderSchema synchronized successfully.'))
-    .catch(err => console.log(err));
-module.exports = orderSchema;
+module.exports = Order;
