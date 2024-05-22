@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Product = require("../models/product"); // Adjust the path to your User model if necessary
 
@@ -47,10 +48,42 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-    User.findAll( {
+    User.findOne({
         where: {
             email: req.body.email
         }
+    }).then(user => {
+        if (user.length < 1) {
+            return res.status(401).json({
+                message: "Auth failed.",
+            })
+        }
+        bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+            if (err) {
+                return res.status(401).json({
+                    message: "Auth failed.",
+                })
+            }
+            if (isMatch) {
+                const token = jwt.sign({
+                        email: user.email,
+                        userID: user._id,
+                    },
+                    process.env.JWT_SECRET,
+                    {
+                        expiresIn: process.env.JWT_EXPIRES
+                    })
+                return res.status(200).json({
+                    message: "Auth Successful.",
+                    token: token
+                })
+            }
+            return res.status(401).json({
+                message: "Auth failed.",
+            })
+        })
+    }).catch(err => {
+        res.status(500).json(err)
     })
 })
 
