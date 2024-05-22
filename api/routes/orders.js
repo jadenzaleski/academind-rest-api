@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const {Sequelize, Model, DataTypes} = require('sequelize');
+const Order = require("../models/order");
 
 router.get("/", (req, res, next) => {
     res.status(200).json({
@@ -7,16 +9,21 @@ router.get("/", (req, res, next) => {
     })
 })
 
-router.post("/", (req, res, next) => {
-    const order = {
-        productID: req.body.productID,
-        quantity: req.body.quantity
-    }
-    res.status(201).json({
-        message: "Handling POST request to /orders",
-        order: order
+router.post("/", async (req, res, next) => {
+    try {
+        const order = await Order.create({
+            product: req.body.product,
+            quantity: req.body.quantity
+        })
 
-    })
+        res.status(201).json({
+            message: "Order created successfully.",
+            order: order.toJSON() // Convert to JSON for consistency
+        });
+    } catch (err) {
+        res.status(500).json(err);
+        console.log(err);
+    }
 })
 
 router.get("/:orderID", (req, res, next) => {

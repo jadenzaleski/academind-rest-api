@@ -10,7 +10,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 
 const productSchema = sequelize.define('product', {
     _id: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
@@ -23,5 +23,9 @@ const productSchema = sequelize.define('product', {
         allowNull: false,
     }
 });
+
+productSchema.sync()
+    .then(r => console.log('productSchema synchronized successfully.'))
+    .catch(err => console.log(err));
 
 module.exports = productSchema;

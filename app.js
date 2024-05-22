@@ -17,10 +17,14 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
     dialect: 'mysql'
 });
 
+
 sequelize
     .authenticate()
     .then(() => console.log('Successfully connected to the database!'))
     .catch((error) => console.log('Failed to connect the database:', error))
+
+
+
 
 
 // Handle CORS errors with headers
