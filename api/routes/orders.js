@@ -1,9 +1,10 @@
 const express = require("express");
+const checkAuth = require("../middleware/check-auth");
 const router = express.Router();
 const Order = require("../models/order");
 const Product = require("../models/product");
 
-router.get("/", async (req, res, next) => {
+router.get("/", checkAuth,async (req, res, next) => {
     try {
         const orders = await Order.findAll({
             include: {
@@ -42,7 +43,7 @@ router.get("/", async (req, res, next) => {
     }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", checkAuth, async (req, res, next) => {
     try {
         // Check if the product exists
         const product = await Product.findByPk(req.body.product);
@@ -72,7 +73,7 @@ router.post("/", async (req, res, next) => {
 });
 
 
-router.get("/:orderID", async (req, res, next) => {
+router.get("/:orderID", checkAuth, async (req, res, next) => {
     const id = req.params.orderID;
 
     try {
@@ -120,7 +121,7 @@ router.get("/:orderID", async (req, res, next) => {
 });
 
 
-router.delete("/:orderID", (req, res, next) => {
+router.delete("/:orderID", checkAuth, (req, res, next) => {
     const id = req.params.orderID;
     Order.destroy({
         where: {

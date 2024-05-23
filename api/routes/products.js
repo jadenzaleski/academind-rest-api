@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {Sequelize, Model, DataTypes} = require('sequelize');
 const multer = require("multer");
+const checkAuth = require("../middleware/check-auth");
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, './uploads/');
@@ -55,7 +56,7 @@ router.get('/', (req, res, next) => {
         });
 })
 
-router.post('/', upload.single('productImage'), async (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), async (req, res, next) => {
     console.log(req.file);
     try {
         const product = await Product.create({
@@ -101,7 +102,7 @@ router.get('/:productID', (req, res, next) => {
     });
 })
 
-router.patch('/:productID', (req, res, next) => {
+router.patch('/:productID', checkAuth, (req, res, next) => {
     const id = req.params.productID;
     const updateOps = {}
     for (const ops of req.body) {
@@ -128,7 +129,7 @@ router.patch('/:productID', (req, res, next) => {
         })
 })
 
-router.delete('/:productID', (req, res, next) => {
+router.delete('/:productID', checkAuth, (req, res, next) => {
     const id = req.params.productID;
     Product.destroy({
         where: {
