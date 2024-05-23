@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const checkAuth = require("../middleware/check-auth");
+const ProductsController = require("../controllers/products");
+
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, './uploads/');
@@ -27,13 +29,9 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-const Product = require("../models/product");
-const ProductsController = require("../controllers/products");
-
 router.get('/', ProductsController.products_get_all)
 
 router.post('/', checkAuth, upload.single('productImage'), ProductsController.products_create);
-
 
 router.get('/:productID', ProductsController.products_get_one);
 

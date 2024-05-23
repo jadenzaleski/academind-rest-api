@@ -1,8 +1,9 @@
-const { DataTypes, Model } = require('sequelize');
+const {DataTypes, Model} = require('sequelize');
 const sequelize = require('../../instance');
 const Product = require('./product');
 
-class Order extends Model {}
+class Order extends Model {
+}
 
 Order.init({
     _id: {
@@ -28,7 +29,7 @@ Order.init({
 });
 
 // Define associations
-Order.belongsTo(Product, { foreignKey: 'product' });
-Product.hasMany(Order, { foreignKey: 'product' });
+Order.belongsTo(Product, {foreignKey: 'product'});
+Product.hasMany(Order, {foreignKey: 'product'});
 
 module.exports = Order;

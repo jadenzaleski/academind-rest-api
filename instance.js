@@ -9,12 +9,8 @@ sequelize
     .then(() => console.log('Successfully connected to the database!'))
     .catch((error) => console.log('Failed to connect the database:', error))
 
-sequelize.sync({ alter: true })
-    .then(() => {
-        console.log('Database & tables created/updated!');
-    })
-    .catch(err => {
-        console.error('Unable to create tables, shutting down...', err);
-    });
+sequelize.sync().then(() => {
+    console.log('Database & tables synced!');
+});
 
 module.exports = sequelize;

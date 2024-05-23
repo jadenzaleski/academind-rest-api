@@ -4,16 +4,11 @@ exports.products_get_all = (req, res, next) => {
     Product.findAll()
         .then(r => {
             const response = {
-                count: r.length,
-                docs: r.map(d => {
+                count: r.length, docs: r.map(d => {
                     return {
-                        name: d.name,
-                        price: d.price,
-                        _id: d._id,
-                        productImage: d.productImage,
-                        request: {
+                        name: d.name, price: d.price, _id: d._id, productImage: d.productImage, request: {
                             type: "GET",
-                            url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT +"/products/" + d._id
+                            url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products/" + d._id
                         }
                     }
 
@@ -30,14 +25,10 @@ exports.products_create = async (req, res, next) => {
     console.log(req.file);
     try {
         const product = await Product.create({
-            name: req.body.name,
-            price: req.body.price,
-            productImage: req.file.path
+            name: req.body.name, price: req.body.price, productImage: req.file.path
         });
         res.status(201).json({
-            message: "Product added to database.",
-            product: product.toJSON(),
-            request: {
+            message: "Product added to database.", product: product.toJSON(), request: {
                 type: "POST",
                 url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products/" + product._id,
             }
@@ -56,11 +47,9 @@ exports.products_get_one = (req, res, next) => {
         }
     }).then(r => {
         if (r.length > 0) {
-            res.status(200).json( {
-                response: r,
-                request: {
-                    type: "GET",
-                    url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products",
+            res.status(200).json({
+                response: r, request: {
+                    type: "GET", url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products",
                 }
             })
         } else {
@@ -77,17 +66,14 @@ exports.products_update = (req, res, next) => {
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Product.update(
-        updateOps,
-        {
-            where: {
-                _id: id
-            }
-        })
+    Product.update(updateOps, {
+        where: {
+            _id: id
+        }
+    })
         .then(r => {
-            res.status(200).json( {
-                response: r,
-                request: {
+            res.status(200).json({
+                response: r, request: {
                     type: "PATCH",
                     url: "http://" + process.env.SERVER_NAME + ":" + process.env.PORT + "/products/" + id,
                 }
@@ -106,8 +92,7 @@ exports.products_delete = (req, res, next) => {
         }
     }).then(r => {
         res.status(200).json({
-            message: "Products deleted from database with matching id.", _id: id,
-            response: r
+            message: "Products deleted from database with matching id.", _id: id, response: r
         })
     }).catch(err => {
         res.status(500).json(err)
